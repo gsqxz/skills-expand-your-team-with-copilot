@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("activity-search");
   const searchButton = document.getElementById("search-button");
   const categoryFilters = document.querySelectorAll(".category-filter");
+  const difficultyFilters = document.querySelectorAll(".difficulty-filter");
   const dayFilters = document.querySelectorAll(".day-filter");
   const timeFilters = document.querySelectorAll(".time-filter");
 
@@ -37,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // State for activities and filters
   let allActivities = {};
   let currentFilter = "all";
+  let currentDifficultyFilter = "all";
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
@@ -49,6 +51,11 @@ document.addEventListener("DOMContentLoaded", () => {
     morning: { start: "06:00", end: "08:00" }, // Before school hours
     afternoon: { start: "15:00", end: "18:00" }, // After school hours
     weekend: { days: ["Saturday", "Sunday"] }, // Weekend days
+  };
+  const difficultyLevels = {
+    beginner: "Beginner",
+    intermediate: "Intermediate",
+    advanced: "Advanced",
   };
 
   // Initialize filters from active elements
@@ -419,9 +426,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     Object.entries(allActivities).forEach(([name, details]) => {
       const activityType = getActivityType(name, details.description);
+      const activityDifficulty = (details.difficulty_level || "").toLowerCase();
 
       // Apply category filter
       if (currentFilter !== "all" && activityType !== currentFilter) {
+        return;
+      }
+
+      // Apply difficulty filter
+      if (currentDifficultyFilter === "all") {
+        if (activityDifficulty) {
+          return;
+        }
+      } else if (activityDifficulty !== currentDifficultyFilter) {
         return;
       }
 
@@ -442,6 +459,7 @@ document.addEventListener("DOMContentLoaded", () => {
         name.toLowerCase(),
         details.description.toLowerCase(),
         formatSchedule(details).toLowerCase(),
+        activityDifficulty,
       ].join(" ");
 
       if (
@@ -498,6 +516,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
+    const activityDifficulty = (details.difficulty_level || "").toLowerCase();
+    const difficultyLabel = difficultyLevels[activityDifficulty];
+    const difficultyHtml = difficultyLabel
+      ? `<p><strong>Difficulty:</strong> ${difficultyLabel}</p>`
+      : "";
 
     // Create activity tag
     const tagHtml = `
@@ -527,6 +550,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <strong>Schedule:</strong> ${formattedSchedule}
         <span class="tooltip-text">Regular meetings at this time throughout the semester</span>
       </p>
+      ${difficultyHtml}
       ${capacityIndicator}
       <div class="participants-list">
         <h5>Current Participants:</h5>
@@ -611,6 +635,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Update current filter and display filtered activities
       currentFilter = button.dataset.category;
+      displayFilteredActivities();
+    });
+  });
+
+  // Add event listeners to difficulty filter buttons
+  difficultyFilters.forEach((button) => {
+    button.addEventListener("click", () => {
+      // Update active class
+      difficultyFilters.forEach((btn) => btn.classList.remove("active"));
+      button.classList.add("active");
+
+      // Update current difficulty filter and display filtered activities
+      currentDifficultyFilter = button.dataset.difficulty;
       displayFilteredActivities();
     });
   });
