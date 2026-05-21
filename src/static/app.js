@@ -304,6 +304,24 @@ document.addEventListener("DOMContentLoaded", () => {
     return details.schedule;
   }
 
+  // Build social sharing links for an activity
+  function buildSocialShareLinks(name, details) {
+    const activityUrl = `${window.location.origin}${
+      window.location.pathname
+    }?activity=${encodeURIComponent(name)}`;
+    const shareText = `Check out ${name} at Mergington High School: ${details.description}`;
+    const encodedText = encodeURIComponent(shareText);
+    const encodedUrl = encodeURIComponent(activityUrl);
+
+    return {
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(
+        `${shareText} ${activityUrl}`
+      )}`,
+      x: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+    };
+  }
+
   // Function to determine activity type (this would ideally come from backend)
   function getActivityType(activityName, description) {
     const name = activityName.toLowerCase();
@@ -498,6 +516,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
+    const shareLinks = buildSocialShareLinks(name, details);
 
     // Create activity tag
     const tagHtml = `
@@ -527,6 +546,12 @@ document.addEventListener("DOMContentLoaded", () => {
         <strong>Schedule:</strong> ${formattedSchedule}
         <span class="tooltip-text">Regular meetings at this time throughout the semester</span>
       </p>
+      <div class="social-share">
+        <span class="share-label">Share:</span>
+        <a class="share-button share-whatsapp" href="${shareLinks.whatsapp}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        <a class="share-button share-x" href="${shareLinks.x}" target="_blank" rel="noopener noreferrer">X</a>
+        <a class="share-button share-facebook" href="${shareLinks.facebook}" target="_blank" rel="noopener noreferrer">Facebook</a>
+      </div>
       ${capacityIndicator}
       <div class="participants-list">
         <h5>Current Participants:</h5>

@@ -187,6 +187,45 @@ section h3 {
   line-height: 1.4;
 }
 
+.social-share {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.share-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.share-button {
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #fff;
+  transition: opacity 0.2s ease;
+}
+
+.share-button:hover {
+  opacity: 0.9;
+}
+
+.share-whatsapp {
+  background-color: #25d366;
+}
+
+.share-x {
+  background-color: #222;
+}
+
+.share-facebook {
+  background-color: #1877f2;
+}
+
 .activity-card-actions {
   margin-top: auto;
   padding-top: 10px;
