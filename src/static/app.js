@@ -21,6 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const displayName = document.getElementById("display-name");
   const logoutButton = document.getElementById("logout-button");
   const themeToggleButton = document.getElementById("theme-toggle-button");
+  const themeToggleIcon = document.getElementById("theme-toggle-icon");
+  const themeToggleText = document.getElementById("theme-toggle-text");
   const loginModal = document.getElementById("login-modal");
   const loginForm = document.getElementById("login-form");
   const closeLoginModal = document.querySelector(".close-login-modal");
@@ -44,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Authentication state
   let currentUser = null;
-  const THEME_STORAGE_KEY = "themePreference";
+  const themeStorageKey = "themePreference";
 
   // Time range mappings for the dropdown
   const timeRanges = {
@@ -173,18 +175,25 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.toggle("dark-mode", isDarkMode);
 
     if (themeToggleButton) {
-      themeToggleButton.textContent = isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode";
+      if (themeToggleIcon) {
+        themeToggleIcon.textContent = isDarkMode ? "☀️" : "🌙";
+      }
+      if (themeToggleText) {
+        themeToggleText.textContent = isDarkMode
+          ? "Switch to Light Mode"
+          : "Switch to Dark Mode";
+      }
       themeToggleButton.setAttribute(
         "aria-label",
         isDarkMode ? "Switch to light mode" : "Switch to dark mode"
       );
     }
 
-    localStorage.setItem(THEME_STORAGE_KEY, isDarkMode ? "dark" : "light");
+    localStorage.setItem(themeStorageKey, isDarkMode ? "dark" : "light");
   }
 
   function initializeTheme() {
-    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    const savedTheme = localStorage.getItem(themeStorageKey);
     applyTheme(savedTheme === "dark" ? "dark" : "light");
   }
 
@@ -257,12 +266,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Event listeners for authentication
-  themeToggleButton.addEventListener("click", () => {
-    const nextTheme = document.body.classList.contains("dark-mode")
-      ? "light"
-      : "dark";
-    applyTheme(nextTheme);
-  });
+  if (themeToggleButton) {
+    themeToggleButton.addEventListener("click", () => {
+      const nextTheme = document.body.classList.contains("dark-mode")
+        ? "light"
+        : "dark";
+      applyTheme(nextTheme);
+    });
+  }
   loginButton.addEventListener("click", openLoginModal);
   logoutButton.addEventListener("click", logout);
   closeLoginModal.addEventListener("click", closeLoginModalHandler);
